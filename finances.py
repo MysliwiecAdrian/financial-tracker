@@ -2,17 +2,40 @@
 
 import sqlite3
 import re
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
+from colorama import init, Fore, Style
+
+init(autoreset=True)
+
 def main():
     initializeTable()
-    # userInputs()
-    # clearDatabase()
-    displayDatabase()
-    # graphFinances()
-
+    
+    while True:
+        print(Fore.CYAN + Style.BRIGHT + "-----------------")
+        print(Fore.CYAN + Style.BRIGHT + "Financial Tracker Menu")
+        print(Fore.CYAN + Style.BRIGHT + "-----------------")
+        print(Fore.GREEN + "1. Add new entry")
+        print(Fore.GREEN + "2. Display current finances")
+        print(Fore.GREEN + "3. Graph current finances")
+        print(Fore.RED + "4. Exit")
+        print(Fore.CYAN + "-----------------")
+        
+        choice = input("Choose an option (1-4): ")
+        
+        if choice == '1':
+            userInputs()
+        elif choice == '2':
+            displayDatabase()
+        elif choice == '3':
+            graphFinances()
+        elif choice == '4':
+            print(Fore.GREEN + "Exiting the Financial Tracker. Goodbye!")
+            break
+        else:
+            print(Fore.RED + "Invalid choice. Please select a valid option (1-4).")
+        
 def initializeTable():
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
@@ -95,7 +118,7 @@ def graphFinances():
     plt.plot(xAXIS, yAXIS)
     plt.xlabel('TIME')
     plt.ylabel('TOTAL')
-    plt.title('Graph')
+    plt.title('Total $ Over Time')
 
     plt.show()
 
