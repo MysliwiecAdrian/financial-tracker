@@ -20,16 +20,21 @@ def main():
         print(Fore.RED + "5. Exit")
         print(Fore.CYAN + "-----------------")
         
-        choice = input("Choose an option (1-4): ")
+        choice = input("Choose an option (1-5): ")
         
         if choice == '1':
             userInputs()
+            print(Fore.GREEN + "ENTRY ADDED")
         elif choice == '2':
             letter = str(input((Fore.RED + "Are you sure you want to delete an entry? (Y/N): ")))
             if letter == "Y":
                 while True:
-                    date = input((Fore.RED + "Enter the date you want to delete: "))
-                    if re.match(r'^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\d{4}$', date):
+                    date = input((Fore.RED + "Enter the date you want to delete or EXIT to quit: "))
+                    if date == "EXIT":
+                        break
+                    elif re.match(r'^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\d{4}$', date):
+                        deleteFromDatabase(date)
+                        print(Fore.RED + "ENTRY [" + date + "] DELETED")
                         break
                     else:
                         print("Invalid date format.")
@@ -42,6 +47,7 @@ def main():
             break
         else:
             print(Fore.RED + "Invalid choice. Please select a valid option (1-5).")
+            
         
 def initializeTable():
     conn = sqlite3.connect('finances.db')
@@ -132,8 +138,9 @@ def graphFinances():
 def deleteFromDatabase(date_):
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
+    # check if valid
     c.execute('''DELETE FROM tracker
-                WHERE date = ?''', (date_))
+                WHERE date = ?''', (date_,))
     conn.commit()
     conn.close()
 
