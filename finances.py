@@ -3,10 +3,7 @@
 import sqlite3
 import re
 import matplotlib.pyplot as plt
-
-
 from colorama import init, Fore, Style
-
 init(autoreset=True)
 
 def main():
@@ -17,9 +14,10 @@ def main():
         print(Fore.CYAN + Style.BRIGHT + "Financial Tracker Menu")
         print(Fore.CYAN + Style.BRIGHT + "-----------------")
         print(Fore.GREEN + "1. Add new entry")
-        print(Fore.GREEN + "2. Display current finances")
-        print(Fore.GREEN + "3. Graph current finances")
-        print(Fore.RED + "4. Exit")
+        print(Fore.GREEN + "2. Delete an entry")
+        print(Fore.GREEN + "3. Display current finances")
+        print(Fore.GREEN + "4. Graph current finances")
+        print(Fore.RED + "5. Exit")
         print(Fore.CYAN + "-----------------")
         
         choice = input("Choose an option (1-4): ")
@@ -27,14 +25,23 @@ def main():
         if choice == '1':
             userInputs()
         elif choice == '2':
-            displayDatabase()
+            letter = str(input((Fore.RED + "Are you sure you want to delete an entry? (Y/N): ")))
+            if letter == "Y":
+                while True:
+                    date = input((Fore.RED + "Enter the date you want to delete: "))
+                    if re.match(r'^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\d{4}$', date):
+                        break
+                    else:
+                        print("Invalid date format.")
         elif choice == '3':
-            graphFinances()
+            displayDatabase()
         elif choice == '4':
-            print(Fore.GREEN + "Exiting the Financial Tracker. Goodbye!")
+            graphFinances()
+        elif choice == '5':
+            print(Fore.GREEN + "Exiting the Financial Tracker...")
             break
         else:
-            print(Fore.RED + "Invalid choice. Please select a valid option (1-4).")
+            print(Fore.RED + "Invalid choice. Please select a valid option (1-5).")
         
 def initializeTable():
     conn = sqlite3.connect('finances.db')
@@ -121,6 +128,14 @@ def graphFinances():
     plt.title('Total $ Over Time')
 
     plt.show()
+
+def deleteFromDatabase(date_):
+    conn = sqlite3.connect('finances.db')
+    c = conn.cursor()
+    c.execute('''DELETE FROM tracker
+                WHERE date = ?''', (date_))
+    conn.commit()
+    conn.close()
 
 if __name__ == '__main__':
     main()
