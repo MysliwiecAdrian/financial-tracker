@@ -3,6 +3,7 @@
 import sqlite3
 import re
 import matplotlib.pyplot as plt
+import pandas as pd
 from colorama import init, Fore, Style
 init(autoreset=True)
 
@@ -20,12 +21,15 @@ def main():
         print(Fore.RED + "5. Exit")
         print(Fore.CYAN + "-----------------")
         
-        choice = input("Choose an option (1-5): ")
+        choice = input(Fore.CYAN + "Choose an option (1-5): ")
         
         if choice == '1':
             userInputs()
             print(Fore.GREEN + "ENTRY ADDED")
         elif choice == '2':
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
+            print(Fore.CYAN + Style.BRIGHT + "Delete An Entry")
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
             letter = str(input((Fore.RED + "Are you sure you want to delete an entry? (Y/N): ")))
             if letter == "Y":
                 while True:
@@ -33,11 +37,13 @@ def main():
                     if date == "EXIT":
                         break
                     elif re.match(r'^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\d{4}$', date):
-                        deleteFromDatabase(date)
-                        print(Fore.RED + "ENTRY [" + date + "] DELETED")
+                        if deleteFromDatabase(date):
+                            print(Fore.RED + "ENTRY [" + date + "] DELETED")
+                        else:
+                            print(Fore.RED + Style.BRIGHT + "DATE DOES NOT EXIST. RETURNING TO MAIN MENU")
                         break
                     else:
-                        print("Invalid date format.")
+                        print(Fore.RED + Style.BRIGHT + "Invalid date format.")
         elif choice == '3':
             displayDatabase()
         elif choice == '4':
@@ -67,18 +73,20 @@ def initializeTable():
     conn.close()
 
 def userInputs():
-    print("Enter today's date with your current finances\n")
+    print(Fore.CYAN + Style.BRIGHT + "-----------------")
+    print(Fore.CYAN + Style.BRIGHT + "Add New Entry")
+    print(Fore.CYAN + Style.BRIGHT + "-----------------")
     while True:
-        date = input("Enter the date (MM/DD/YYYY): ")
+        date = input(Fore.CYAN + "Enter the date (MM/DD/YYYY): ")
         if re.match(r'^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\d{4}$', date):
             break
         else:
             print("Invalid date format.")
 
-    chase = float(input("Amount in CHASE: "))
-    amex = float(input("Amount in AMEX: "))
-    citi = float(input("Amount in CITI: "))
-    roth = float(input("Amount in Roth IRA: "))
+    chase = float(input(Fore.CYAN + "Amount in CHASE: "))
+    amex = float(input(Fore.CYAN + "Amount in AMEX: "))
+    citi = float(input(Fore.CYAN + "Amount in CITI: "))
+    roth = float(input(Fore.CYAN + "Amount in Roth IRA: "))
 
     addToDatabase(date, chase, amex, citi, roth)
 
@@ -106,7 +114,7 @@ def displayDatabase():
         date, chase, amex, citi, roth, total = row
         print(f"{date:<11} | {chase:>8.2f} | {amex:>8.2f} | {citi:>8.2f} | {roth:>8.2f} | {total:>8.2f}")
 
-
+    print("")
     conn.close()
 
 def clearDatabase():
@@ -134,15 +142,21 @@ def graphFinances():
     plt.title('Total $ Over Time')
 
     plt.show()
-
 def deleteFromDatabase(date_):
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
     # check if valid
-    c.execute('''DELETE FROM tracker
-                WHERE date = ?''', (date_,))
-    conn.commit()
-    conn.close()
+    c.execute('''SELECT * FROM tracker WHERE date = ?''', (date_,))
+    record = c.fetchone()
+    
+    if record:
+        # Date exists, proceed to delete
+        c.execute('''DELETE FROM tracker WHERE date = ?''', (date_,))
+        conn.commit()
+        return True
+    else:
+        # Date does not exist
+        return False
 
 if __name__ == '__main__':
     main()
