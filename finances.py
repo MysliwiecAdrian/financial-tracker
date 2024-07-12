@@ -45,8 +45,14 @@ def main():
                     else:
                         print(Fore.RED + Style.BRIGHT + "Invalid date format.")
         elif choice == '3':
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
+            print(Fore.CYAN + Style.BRIGHT + "Current Finances")
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
             displayDatabase()
         elif choice == '4':
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
+            print(Fore.CYAN + Style.BRIGHT + "Graphing Finances")
+            print(Fore.CYAN + Style.BRIGHT + "-----------------")
             graphFinances()
         elif choice == '5':
             print(Fore.GREEN + "Exiting the Financial Tracker...")
@@ -107,14 +113,13 @@ def displayDatabase():
     c.execute('''SELECT *
                 FROM tracker''')
     rows = c.fetchall()
-    print("\nDATE        | CHASE $  | AMEX $   | CITI $   | ROTH $   | TOTAL")
+    print("DATE        | CHASE $  | AMEX $   | CITI $   | ROTH $   | TOTAL")
     print("------------|----------|----------|----------|----------|----------")
     
     for row in rows:
         date, chase, amex, citi, roth, total = row
         print(f"{date:<11} | {chase:>8.2f} | {amex:>8.2f} | {citi:>8.2f} | {roth:>8.2f} | {total:>8.2f}")
 
-    print("")
     conn.close()
 
 def clearDatabase():
