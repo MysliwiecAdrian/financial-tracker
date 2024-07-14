@@ -120,6 +120,7 @@ def displayDatabase():
         date, chase, amex, citi, roth, total = row
         print(f"{date:<11} | {chase:>8.2f} | {amex:>8.2f} | {citi:>8.2f} | {roth:>8.2f} | {total:>8.2f}")
 
+    useless = input()
     conn.close()
 
 def clearDatabase():
@@ -135,18 +136,46 @@ def graphFinances():
     c.execute('''SELECT *
                 FROM tracker''')
     rows = c.fetchall()
-    xAXIS, yAXIS = [], []
+    xAXIS, yAXISTotal, yAXISChase, yAXISAmex, yAXISCiti, yAXISRoth = [], [], [], [], [], []
     for row in rows:
         date, chase, amex, citi, roth, total = row
         xAXIS.append(date)
-        yAXIS.append(total)
+        yAXISTotal.append(total)
+        yAXISChase.append(chase)
+        yAXISAmex.append(amex)
+        yAXISCiti.append(citi)
+        yAXISRoth.append(roth)
     
-    plt.plot(xAXIS, yAXIS)
-    plt.xlabel('TIME')
-    plt.ylabel('TOTAL')
-    plt.title('Total $ Over Time')
-
-    plt.show()
+    print(Fore.GREEN + "1: Total")
+    print(Fore.GREEN + "2: Chase")
+    print(Fore.GREEN + "3: AMEX")
+    print(Fore.GREEN + "4: Citi")
+    print(Fore.GREEN + "5: ROTH IRA")
+    print(Fore.CYAN + "-----------------")
+    amount = str(input(Fore.CYAN + "Enter your choices consecutively (ex. 123): "))
+    if len(amount) < 5:
+        for i in range(len(amount)):
+            if amount[i] == '1':
+                plt.plot(xAXIS, yAXISTotal, label = "Total")
+            elif amount[i] == '2':
+                plt.plot(xAXIS, yAXISChase, label = "Chase")
+            elif amount[i] == '3':
+                plt.plot(xAXIS, yAXISAmex, label = "Amex")
+            elif amount[i] == '4':
+                plt.plot(xAXIS, yAXISCiti, label = "Citi")
+            elif amount[i] == '5':
+                plt.plot(xAXIS, yAXISRoth, label = "Roth IRA")
+            else:
+                print(Fore.RED + Style.BRIGHT + "Invalid Number Detected, Terminating.")
+                break;
+        plt.xlabel('TIME')
+        plt.ylabel('Money')
+        plt.title('Money Over Time')
+        plt.legend()
+        plt.show()
+    else:
+        print(Fore.RED + Style.BRIGHT + "Input Amount Exceeds Limit, Terminating.")
+    
 def deleteFromDatabase(date_):
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
