@@ -130,6 +130,11 @@ def clearDatabase():
     conn.commit()
     conn.close()
 
+def unique_digits(input_string):
+    digits_set = set(input_string)
+    return len(digits_set) == len(input_string)
+
+
 def graphFinances():
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
@@ -153,7 +158,7 @@ def graphFinances():
     print(Fore.GREEN + "5: ROTH IRA")
     print(Fore.CYAN + "-----------------")
     amount = str(input(Fore.CYAN + "Enter your choices consecutively (ex. 123): "))
-    if len(amount) < 5:
+    if len(amount) < 5 and unique_digits(amount):
         for i in range(len(amount)):
             if amount[i] == '1':
                 plt.plot(xAXIS, yAXISTotal, label = "Total")
@@ -174,7 +179,7 @@ def graphFinances():
         plt.legend()
         plt.show()
     else:
-        print(Fore.RED + Style.BRIGHT + "Input Amount Exceeds Limit, Terminating.")
+        print(Fore.RED + Style.BRIGHT + "Input Invalid.\nTry unique numbers or not exceeding 5 entries.")
     
 def deleteFromDatabase(date_):
     conn = sqlite3.connect('finances.db')
