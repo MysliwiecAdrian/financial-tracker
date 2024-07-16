@@ -107,6 +107,28 @@ def addToDatabase(date, chase, amex, citi, roth):
     conn.commit()
     conn.close()
 
+def recentPieChart():
+    conn = sqlite3.connect('finances.db')
+    c = conn.cursor()
+
+    pieChart= str(input(Fore.CYAN + "View the pie chart distribution? (Y/N): "))
+    if pieChart == "Y":
+        c.execute('''SELECT * FROM tracker ORDER BY date DESC LIMIT 1''')
+        most_recent = c.fetchone()
+        
+        date, chase, amex, citi, roth, total = most_recent
+        labels = ['Chase', 'AMEX', 'Citi', 'Roth IRA']
+        sizes = [chase, amex, citi, roth]
+        colors = ['steelblue', 'darkslateblue', 'darkgoldenrod', 'forestgreen']
+            
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%',
+                    shadow=True, startangle=140)
+
+        plt.title(f"Distribution for: {date}")
+        plt.show()
+
+        conn.close()
+
 def displayDatabase():
     conn = sqlite3.connect('finances.db')
     c = conn.cursor()
@@ -120,8 +142,9 @@ def displayDatabase():
         date, chase, amex, citi, roth, total = row
         print(f"{date:<11} | {chase:>8.2f} | {amex:>8.2f} | {citi:>8.2f} | {roth:>8.2f} | {total:>8.2f}")
 
-    useless = input()
     conn.close()
+
+    recentPieChart()
 
 def clearDatabase():
     conn = sqlite3.connect('finances.db')
