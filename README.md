@@ -7,9 +7,10 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Usage](#usage)
+- [Libraries](#libraries)
 
 ## Introduction
-The Financial Tracker is a simple Python application that helps users track their finances across multiple accounts (Chase, Amex, Citi, and Roth IRA in this instance). It allows users to add, delete, view, and graph their financial data.
+The Financial Tracker is a simple Python application that helps users track their finances across multiple accounts. It allows users to add, delete, view, and graph their financial data.
 
 ## Features
 - Add new financial entries with the date and amounts in different accounts.
@@ -21,7 +22,7 @@ The Financial Tracker is a simple Python application that helps users track thei
 ## Usage
 To start the program, run the following command
 ```
-python financial_tracker.py
+python finances.py
 ```
 ### Menu Options
 1. Add new entry: Prompts the user to enter the date and amounts for each account, then saves this information to the database.
@@ -29,3 +30,10 @@ python financial_tracker.py
 3. Display current finances: Displays all financial entries in a tabular format and shows a pie chart of the most recent entry.
 4. Graph current finances: Allows the user to graph financial data over time for selected accounts.
 5. Exit: Exits the application.
+
+## Libraries
+- SQLite
+- RE
+- Matplotlib
+- Pandas
+- Colorama
